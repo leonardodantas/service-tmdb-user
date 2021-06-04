@@ -18,4 +18,7 @@ public class Rating {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar date;
+
+    @Column(name = "resumo_avaliacao")
+    private String resume;
 }
