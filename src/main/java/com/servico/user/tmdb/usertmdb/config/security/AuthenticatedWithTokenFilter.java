@@ -8,33 +8,38 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component
 public class AuthenticatedWithTokenFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final String secret;
+    private final String password;
+    private HttpServletResponse response;
 
-    @Value("${jwt.password}")
-    private String password;
-
+    public AuthenticatedWithTokenFilter(String secret, String password){
+        this.secret = secret;
+        this.password = password;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        this.response = response;
         String token = getToken(request);
         if(Strings.isNullOrEmpty(token)){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
+            this.sendUnAuthorized();
         }
         filterChain.doFilter(request, response);
     }
 
+    private void sendUnAuthorized() throws IOException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                "Required headers not specified in the request");
+    }
 
-    private String getToken(HttpServletRequest request) {
+    private String getToken(HttpServletRequest request) throws IOException {
         String token = request.getHeader("Authorization");
         if (!Strings.isNullOrEmpty(token)) {
             validadeTokenPassword(token);
@@ -43,14 +48,14 @@ public class AuthenticatedWithTokenFilter extends OncePerRequestFilter {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
     }
 
-    private void validadeTokenPassword(String token){
+    private void validadeTokenPassword(String token) throws IOException {
         try{
             String passwordToken = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("password").toString();
             if(!passwordToken.equals(password)){
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
+                this.sendUnAuthorized();
             }
         }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
+            this.sendUnAuthorized();
         }
     }
 }
