@@ -1,17 +1,16 @@
 package com.servico.user.tmdb.usertmdb.controllers;
 
+import com.servico.user.tmdb.usertmdb.models.error.ErrorResponse;
 import com.servico.user.tmdb.usertmdb.models.request.MovieRequest;
+import com.servico.user.tmdb.usertmdb.models.responses.MovieUserResponse;
+import com.servico.user.tmdb.usertmdb.models.responses.MoviesUserResponse;
 import com.servico.user.tmdb.usertmdb.services.ListMovieService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.servico.user.tmdb.usertmdb.utils.request.Language;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.HttpURLConnection;
@@ -25,16 +24,32 @@ public class ListMovieController {
     private ListMovieService listMovieService;
 
     @PostMapping("/movie/add")
-    @ApiOperation(tags = "Serviço para criação de lista de filmes do usuario", value = "Adicionar um novo filme na lista")
+    @ApiOperation(tags = "Criação de lista de filmes do usuario", value = "Adicionar um novo filme na lista")
     @ApiResponses(value = {
-            @ApiResponse(code = HttpURLConnection.HTTP_OK, message = "Returns"),
+            @ApiResponse(code = HttpURLConnection.HTTP_CREATED, message = "Created", response = MovieUserResponse.class),
             @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
-            @ApiResponse(code = HttpURLConnection.HTTP_NO_CONTENT, message = "Pagina deve ser igual ou menor que 500"),
-            @ApiResponse(code = HttpURLConnection.HTTP_BAD_REQUEST, message = "Servidor fora do ar")
+            @ApiResponse(code = HttpURLConnection.HTTP_BAD_REQUEST, message = "Servidor fora do ar", response = ErrorResponse.class)
     })
-    public ResponseEntity<?> addMovieInList(@Valid @RequestBody MovieRequest movieRequest){
-
-        return null;
+    public ResponseEntity<?> addMovieInList(@Valid @RequestBody MovieRequest body,
+                                            @ApiParam(required = true, value = "Idioma do filme")
+                                            @RequestParam Language language){
+        MovieUserResponse response = listMovieService.addMovie(body.getIdMovie(), language);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/movies/user")
+    @ApiOperation(tags = "Lista de filmes do usuario", value = "Exibe todos os filmes de um usuario pelo seu id")
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpURLConnection.HTTP_CREATED, message = "Created", response = MovieUserResponse.class),
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
+            @ApiResponse(code = HttpURLConnection.HTTP_BAD_REQUEST, message = "Servidor fora do ar", response = ErrorResponse.class)
+    })
+    public ResponseEntity<?> listMovieUser(@ApiParam(required = true, value = "id")
+                                               @RequestParam String id){
+        MoviesUserResponse response = listMovieService.listMovieUser(id);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+
 
 }

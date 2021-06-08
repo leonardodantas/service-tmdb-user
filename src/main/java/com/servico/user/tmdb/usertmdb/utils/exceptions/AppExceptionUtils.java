@@ -15,5 +15,4 @@ public class AppExceptionUtils {
         ErrorResponse errorResponse = new ErrorResponse(error);
         return new ResponseEntity<>(errorResponse, new HttpHeaders(), error.getStatus());
     }
-
 }
