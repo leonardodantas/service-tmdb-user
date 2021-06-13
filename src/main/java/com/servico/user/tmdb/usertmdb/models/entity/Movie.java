@@ -2,6 +2,7 @@ package com.servico.user.tmdb.usertmdb.models.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -21,13 +22,17 @@ public class Movie {
     @Column(name = "nome", length = 120)
     private String name;
 
+    @Setter
     @Column(name = "recomendar")
     private boolean toRecommend;
 
+    @Setter
     @Column(name = "assistido")
     private boolean watched;
 
-    @OneToOne
+    @Setter
+    @JoinColumn(name = "rating_id")
+    @OneToOne(cascade = CascadeType.ALL)
     private Rating rating;
 
     public Movie(){}

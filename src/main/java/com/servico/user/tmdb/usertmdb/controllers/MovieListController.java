@@ -1,5 +1,6 @@
 package com.servico.user.tmdb.usertmdb.controllers;
 
+import com.google.common.base.Strings;
 import com.servico.user.tmdb.usertmdb.models.error.ErrorResponse;
 import com.servico.user.tmdb.usertmdb.models.request.MovieRequest;
 import com.servico.user.tmdb.usertmdb.models.responses.MovieUserResponse;
@@ -15,16 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.HttpURLConnection;
 
-@Api(tags = "Serviço para criação de lista de filmes do usuario")
+@Api(tags = "Filmes")
 @RestController
-@RequestMapping("/listmovie")
-public class ListMovieController {
+@RequestMapping("v1/movie-list")
+public class MovieListController {
 
     @Autowired
     private ListMovieService listMovieService;
 
     @PostMapping("/movie/add")
-    @ApiOperation(tags = "Criação de lista de filmes do usuario", value = "Adicionar um novo filme na lista")
+    @ApiOperation(tags = "Filmes", value = "Adicionar um filme na lista do usuario")
     @ApiResponses(value = {
             @ApiResponse(code = HttpURLConnection.HTTP_CREATED, message = "Created", response = MovieUserResponse.class),
             @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
@@ -33,21 +34,23 @@ public class ListMovieController {
     public ResponseEntity<?> addMovieInList(@Valid @RequestBody MovieRequest body,
                                             @ApiParam(required = true, value = "Idioma do filme")
                                             @RequestParam Language language){
-        MovieUserResponse response = listMovieService.addMovie(body.getIdMovie(), language);
+        MovieUserResponse response = listMovieService.addMovie(body.getMovieId(), language);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/movies/user")
-    @ApiOperation(tags = "Lista de filmes do usuario", value = "Exibe todos os filmes de um usuario pelo seu id")
+    @ApiOperation(tags = "Filmes", value = "Exibe os filmes do usuario")
     @ApiResponses(value = {
-            @ApiResponse(code = HttpURLConnection.HTTP_CREATED, message = "Created", response = MovieUserResponse.class),
+            @ApiResponse(code = HttpURLConnection.HTTP_OK, message = "Created", response = MovieUserResponse.class),
             @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
             @ApiResponse(code = HttpURLConnection.HTTP_BAD_REQUEST, message = "Servidor fora do ar", response = ErrorResponse.class)
     })
-    public ResponseEntity<?> listMovieUser(@ApiParam(required = true, value = "id")
-                                               @RequestParam String id){
-        MoviesUserResponse response = listMovieService.listMovieUser(id);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> listMovieUser(){
+        MoviesUserResponse response = listMovieService.listMovieUser();
+        if(Strings.isNullOrEmpty(response.getId())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

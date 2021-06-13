@@ -8,6 +8,7 @@ import com.servico.user.tmdb.usertmdb.models.entity.User;
 import com.servico.user.tmdb.usertmdb.models.responses.MovieUserResponse;
 import com.servico.user.tmdb.usertmdb.models.responses.MoviesUserResponse;
 import com.servico.user.tmdb.usertmdb.repository.IUserRepository;
+import com.servico.user.tmdb.usertmdb.services.rest.UserServiceRest;
 import com.servico.user.tmdb.usertmdb.utils.constants.Constats;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,9 @@ public class UserService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private UserServiceRest userServiceRest;
 
     private User getUser(String id){
         Optional<User> user = getUserInDataBase(id);
@@ -69,11 +73,10 @@ public class UserService {
         return user;
     }
 
-    public MoviesUserResponse listMovie(String id) {
-        Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constats.USER_NOT_FOUND);
-        }
-        return new MoviesUserResponse(user.get());
+    public Optional<User> listMovie() {
+        UserDTO user = userServiceRest.getUserDTOWithToken();
+        Optional<User> userWithMovie = userRepository.findById(user.getId());
+        return userWithMovie;
     }
+
 }

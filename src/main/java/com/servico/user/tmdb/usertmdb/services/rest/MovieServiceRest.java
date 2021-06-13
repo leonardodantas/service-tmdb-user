@@ -3,6 +3,7 @@ package com.servico.user.tmdb.usertmdb.services.rest;
 import com.servico.user.tmdb.usertmdb.models.dto.MovieDTO;
 import com.servico.user.tmdb.usertmdb.utils.constants.Constats;
 import com.servico.user.tmdb.usertmdb.utils.request.Language;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,24 @@ public class MovieServiceRest {
     @Value("${url.get.movie.detail}")
     private String urlService;
 
+    public MovieDTO getMovieDetailTMDB(String movieId){
+        String url = generateUrlWithLanguage(Language.PT, movieId);
+        return getMovieTMDB(url);
+    }
+
     public MovieDTO getMovieDetailTMDB(String movieId, Language language){
         String url = generateUrlWithLanguage(language, movieId);
+        return getMovieTMDB(url);
+    }
+
+    private MovieDTO getMovieTMDB(String url) {
         MovieDTO movieDTO;
         try {
-                movieDTO = restTemplate.getForObject(url, MovieDTO.class);
-            if(Objects.isNull(movieDTO)){
+            movieDTO = restTemplate.getForObject(url, MovieDTO.class);
+            if (Objects.isNull(movieDTO)) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, Constats.USER_NOT_FOUND);
             }
-        } catch (RestClientResponseException e){
+        } catch (RestClientResponseException e) {
             throw new ResponseStatusException(HttpStatus.valueOf(e.getRawStatusCode()), e.getResponseBodyAsString());
         }
         return movieDTO;

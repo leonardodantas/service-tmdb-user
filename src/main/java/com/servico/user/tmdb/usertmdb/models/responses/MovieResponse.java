@@ -1,10 +1,11 @@
 package com.servico.user.tmdb.usertmdb.models.responses;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.servico.user.tmdb.usertmdb.models.entity.Movie;
-import com.servico.user.tmdb.usertmdb.models.entity.Rating;
 import lombok.Getter;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MovieResponse {
 
     private String id;

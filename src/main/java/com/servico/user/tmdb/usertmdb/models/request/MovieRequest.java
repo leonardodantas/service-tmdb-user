@@ -1,5 +1,6 @@
 package com.servico.user.tmdb.usertmdb.models.request;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
@@ -8,5 +9,6 @@ import javax.validation.constraints.NotNull;
 public class MovieRequest {
 
     @NotNull
-    private String idMovie;
+    @ApiModelProperty(name = "movieId" , value = "ID do filme", example = "460465")
+    private String movieId;
 }
