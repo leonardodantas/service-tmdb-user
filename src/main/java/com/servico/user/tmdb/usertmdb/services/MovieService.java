@@ -32,7 +32,7 @@ public class MovieService {
     public Movie getMovieUser(String id, String movieDTOId){
         int movieId = Integer.parseInt(movieDTOId);
         User user = userRepository.findByIdAndMoviesIdMovieTMDB(id, movieId);
-        if(user.getMovies().isEmpty()) {
+        if(Objects.isNull(user)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constats.MOVIE_NONEXIST);
         }
         return findMovieInList(movieId, user);

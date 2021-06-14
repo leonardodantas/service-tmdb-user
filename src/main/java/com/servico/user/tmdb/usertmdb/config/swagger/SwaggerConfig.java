@@ -63,8 +63,8 @@ public class SwaggerConfig {
 
     private ApiInfo metaData() {
         return new ApiInfoBuilder()
-                .title(name)
-                .description(description)
+                .title("APP - GERENCIADOR DE INFORMAÇÕES DO USUARIO")
+                .description("Utilização de uma conta para gerenciamento de informações sobre lista de filmes")
                 .version(version)
                 .license("Apache License Version 2.0")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")

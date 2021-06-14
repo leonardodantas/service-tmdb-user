@@ -13,12 +13,12 @@ public class Errors {
     private String field;
     private String message;
 
-    public Errors(ObjectError error) {
-        this.field = ((FieldError) error).getField();
-        this.message = error.getDefaultMessage();
-    }
-
     public Errors(String message) {
         this.message = message;
+    }
+
+    public Errors(String field, String mensagem) {
+        this.field = field;
+        this.message = mensagem;
     }
 }

@@ -37,4 +37,21 @@ public class RecommendWatchedController {
         MoviesUserResponse response = recommendWatchedService.userWatchMovie(movieId, body);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+
+    @PutMapping
+    @ApiOperation(tags = "Recomendações", value = "Atualizar recomendação de um filme")
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpURLConnection.HTTP_CREATED, message = "Created", response = MovieUserResponse.class),
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized"),
+            @ApiResponse(code = HttpURLConnection.HTTP_BAD_REQUEST, message = "Servidor fora do ar", response = ErrorResponse.class)
+    })
+    public ResponseEntity<?> updateRecommendMovie(
+            @ApiParam(value = "Id do filme para avaliação", name = "movieId")
+            @RequestParam String movieId,
+            @Valid @RequestBody RecommendWatchedRequest body){
+
+        MoviesUserResponse response = recommendWatchedService.updateRecommendMovie(movieId, body);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 }

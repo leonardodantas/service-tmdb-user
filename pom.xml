@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.servico.user.tmdb</groupId>
 	<artifactId>user-tmdb</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>user-tmdb</name>
 	<description>Serviço onde é possivel um usuario criar uma lista de filmes</description>
 	<properties>

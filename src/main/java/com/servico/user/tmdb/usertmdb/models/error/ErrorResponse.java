@@ -16,22 +16,26 @@ public class ErrorResponse {
     private final String uuid;
     private final HttpStatus httpStatus;
     private final LocalDateTime date;
-    private final int httpStatusCode;
     private List<Errors> errors;
 
-    public ErrorResponse(ResponseStatusException error) {
-        uuid = UUID.randomUUID().toString();
-        httpStatus = error.getStatus();
-        httpStatusCode = error.getStatus().value();
-        date = LocalDateTime.now();
-        this.errors = Collections.singletonList(new Errors(error.getReason()));
+    public ErrorResponse(ErrorResponseStatus error, HttpStatus httpStatus) {
+        this.uuid = UUID.randomUUID().toString();
+        this.date = LocalDateTime.now();
+        this.errors = Collections.singletonList(new Errors(error.getMessage()));
+        this.httpStatus = httpStatus;
     }
 
-    public ErrorResponse(MethodArgumentNotValidException exception, List<Errors> errors) {
+    public ErrorResponse(List<Errors> dto) {
         this.uuid = UUID.randomUUID().toString();
-        this.httpStatus = HttpStatus.BAD_REQUEST;
-        this.httpStatusCode = HttpStatus.BAD_REQUEST.value();
         this.date = LocalDateTime.now();
-        this.errors = errors;
+        this.httpStatus = HttpStatus.BAD_REQUEST;
+        this.errors = dto;
+    }
+
+    public ErrorResponse(HttpStatus status, String message) {
+        this.uuid = UUID.randomUUID().toString();
+        this.date = LocalDateTime.now();
+        this.httpStatus = status;
+        this.errors = Collections.singletonList(new Errors(message));
     }
 }
